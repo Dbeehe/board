@@ -1,6 +1,7 @@
 package com.icia.board.entity;
 
 
+import com.icia.board.dto.BoardDTO;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
@@ -18,17 +19,27 @@ public class BoardEntity {
     private Long id;
 
     @Column(nullable = false)
-    private String boardwriter;
+    private String boardWriter;
 
     @Column(nullable = false)
-    private String boardtitle;
+    private String boardTitle;
 
     @Column(nullable = false)
-    private String boardpass;
+    private String boardPass;
 
     @Column
-    private String boardcontents;
+    private String boardContents;
 
     @Column
-    private String boardhits;
+    private int boardHits;
+
+    public static BoardEntity toSaveEntity(BoardDTO boardDTO){
+        BoardEntity boardEntity = new BoardEntity();
+        boardEntity.setBoardWriter(boardDTO.getBoardWriter());
+        boardEntity.setBoardTitle(boardDTO.getBoardTitle());
+        boardEntity.setBoardPass(boardDTO.getBoardPass());
+        boardEntity.setBoardContents(boardDTO.getBoardContents());
+        boardEntity.setBoardHits(boardDTO.getBoardHits());
+        return boardEntity;
+    }
 }
