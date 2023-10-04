@@ -1,7 +1,10 @@
 <!DOCTYPE html>
 <head>
+    <th:block th:replace="~{component/config :: config}"></th:block>
 </head>
 <body>
+<div th:replace="~{component/header :: header}"></div>
+<div th:replace="~{component/nav :: nav}"></div>
 
 <div class="container">
     <form action="/board/save" method="post">
@@ -16,6 +19,7 @@
 
 </div>
 
+<div th:replace="~{component/footer :: footer}"></div>
 
 </body>
 </html>
