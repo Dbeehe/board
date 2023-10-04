@@ -11,6 +11,8 @@
             <th>제목</th>
             <th>내용</th>
             <th>조회수</th>
+            <th>조회</th>
+            <th>수정</th>
         </tr>
         <tr th:each="board: ${boardList}">
             <td th:text="${board.boardWriter}"></td>
