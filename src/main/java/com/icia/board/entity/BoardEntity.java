@@ -18,16 +18,16 @@ public class BoardEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(length = 20, nullable = false)
     private String boardWriter;
 
-    @Column(nullable = false)
+    @Column(length = 50, nullable = false)
     private String boardTitle;
 
-    @Column(nullable = false)
+    @Column(length = 20, nullable = false)
     private String boardPass;
 
-    @Column
+    @Column(length = 500)
     private String boardContents;
 
     @Column
