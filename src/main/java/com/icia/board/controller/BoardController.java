@@ -58,6 +58,19 @@ public class BoardController {
         boardService.delete(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
+    @GetMapping("/update/{id}")
+    public String update(@PathVariable("id") Long id, Model model) {
+        BoardDTO boardDTO = boardService.findById(id);
+        model.addAttribute("board", boardDTO);
+        return "boardPages/boardUpdate";
+    }
+
+    @PutMapping("/{id")
+    public ResponseEntity update(@RequestBody BoardDTO boardDTO){
+        boardService.update(boardDTO);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }
 
 
