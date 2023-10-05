@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -25,10 +26,22 @@ public class BoardService {
         return boardRepository.save(boardEntity).getId();
     }
 
-    public Page<BoardDTO> findAll(int page) {
+    public Page<BoardDTO> findAll(int page, String type, String q) {
         page = page - 1;
         int pageLimit = 5;
-        Page<BoardEntity> boardEntities = boardRepository.findAll(PageRequest.of(page, pageLimit, Sort.by(Sort.Direction.DESC, "id")));
+        Page<BoardEntity> boardEntities = null;
+        // 검색인지 구분
+        if (q.equals("")) {
+            // 일반 페이징
+            boardEntities = boardRepository.findAll(PageRequest.of(page, pageLimit, Sort.by(Sort.Direction.DESC, "id")));
+        } else {
+            if (type.equals("boardTitle")) {
+                boardEntities = boardRepository.findByBoardTitleContaining(q, PageRequest.of(page, pageLimit, Sort.by(Sort.Direction.DESC, "id")));
+            } else if (type.equals("boardWriter")) {
+                boardEntities = boardRepository.findByBoardWriterContaining(q, PageRequest.of(page, pageLimit, Sort.by(Sort.Direction.DESC, "id")));
+            }
+        }
+
         Page<BoardDTO> boardList = boardEntities.map(boardEntity ->
                 BoardDTO.builder()
                         .id(boardEntity.getId())
@@ -60,21 +73,8 @@ public class BoardService {
         boardRepository.deleteById(id);
     }
 
-
     public void update(BoardDTO boardDTO) {
         BoardEntity boardEntity = BoardEntity.toUpdateEntity(boardDTO);
         boardRepository.save(boardEntity);
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-

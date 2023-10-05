@@ -11,7 +11,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 
 @Controller
 @RequestMapping("/board")
@@ -30,55 +29,62 @@ public class BoardController {
         return "redirect:/board";
     }
 
+
     /*
         rest api
         /board/10 => 10번글
         /board/20 => 20번글
-        /board/5 => 5번글
+        /member/5 => 5번회원
 
-        3페에지에 있는 15번글
+        3페이지에 있는 15번글
         /board/3/15
         /board/15?page=3
      */
     @GetMapping
     public String findAll(Model model,
-                          @RequestParam(value = "page", required = false, defaultValue = "1") int page) {
-        Page<BoardDTO> boardDTOList = boardService.findAll(page);
-        model.addAttribute("boardList", boardDTOList);
-        // 목록 하단에 보여줄 페이지 번호
+                          @RequestParam(value = "page", required = false, defaultValue = "1") int page,
+                          @RequestParam(value = "type", required = false, defaultValue = "boardTitle") String type,
+                          @RequestParam(value = "q", required = false, defaultValue = "") String q) {
+        Page<BoardDTO> boardDTOList = boardService.findAll(page, type, q);
+
         int blockLimit = 3;
         int startPage = (((int) (Math.ceil((double) page / blockLimit))) - 1) * blockLimit + 1;
         int endPage = ((startPage + blockLimit - 1) < boardDTOList.getTotalPages()) ? startPage + blockLimit - 1 : boardDTOList.getTotalPages();
-//        if ((startPage + blockLimit - 1) < boardDTOS.getTotalPages()) {
-//            endPage = startPage + blockLimit - 1;
-//        } else {
-//            endPage = boardDTOS.getTotalPages();
-//        }
+
+        model.addAttribute("boardList", boardDTOList);
         model.addAttribute("startPage", startPage);
         model.addAttribute("endPage", endPage);
+        model.addAttribute("page", page);
+        model.addAttribute("type", type);
+        model.addAttribute("q", q);
 
         return "boardPages/boardList";
     }
 
-
     @GetMapping("/{id}")
-    public String findById(@PathVariable("id") Long id, Model model) {
+    public String findById(@PathVariable("id") Long id, Model model,
+                           @RequestParam(value = "page", required = false, defaultValue = "1") int page,
+                           @RequestParam(value = "type", required = false, defaultValue = "boardTitle") String type,
+                           @RequestParam(value = "q", required = false, defaultValue = "") String q) {
         boardService.increaseHits(id);
         BoardDTO boardDTO = boardService.findById(id);
         model.addAttribute("board", boardDTO);
+        model.addAttribute("page", page);
+        model.addAttribute("type", type);
+        model.addAttribute("q", q);
         return "boardPages/boardDetail";
     }
 
     // 주소로 요청
     @GetMapping("/delete/{id}")
-    public String delete(@PathVariable("id") Long id){
+    public String delete(@PathVariable("id") Long id) {
         boardService.delete(id);
         return "redirect:/board";
     }
 
     // axios로 delete 요청
     @DeleteMapping("/{id}")
-    public ResponseEntity deleteByAxios(@PathVariable("id") Long id){
+    public ResponseEntity deleteByAxios(@PathVariable("id") Long id) {
         boardService.delete(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -91,19 +97,10 @@ public class BoardController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity update(@RequestBody BoardDTO boardDTO){
+    public ResponseEntity update(@RequestBody BoardDTO boardDTO) {
         boardService.update(boardDTO);
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
 }
-
-
-
-
-
-
-
-
-
-
 
